@@ -20,7 +20,7 @@ pip install -r requirements.txt  # install
 
 ```bash
 # windows
-python export.py --rknpu rk3588 --weight yolov5s.pt
+python export.py --rknpu --weight yolov5s.pt
 
 # ubuntu
 python3 export.py --rknpu --weight yolov5s.pt
@@ -38,7 +38,7 @@ rk_platform 支持 rk1808、rv1109、rv1126、rk3399pro、rk3566、rk3562、rk35
 ```bash
 git clone https://github.com/airockchip/rknn-toolkit2.git
 
-cd /home/sun/rk3588/rknn-toolkit2-2.3.2/rknn-toolkit2/packages/x86_64 
+cd /home/xxx/rk3588/rknn-toolkit2-2.3.2/rknn-toolkit2/packages/x86_64 
 # 根据系统版本选择
 pip install rknn_toolkit2-2.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 ```
@@ -46,7 +46,7 @@ pip install rknn_toolkit2-2.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
 **onnx->rknn**
 
 ```bash
-cd /home/sun/rk3588/rknn-toolkit2-2.3.2/rknn-toolkit2/examples/onnx/yolov5
+cd /home/xxx/rk3588/rknn-toolkit2-2.3.2/rknn-toolkit2/examples/onnx/yolov5
 
 
 
@@ -82,3 +82,70 @@ python3 test.py
 ```
 
 rknn-toolkit2-2.3.2,rknn-toolkit2-1.5.0,rknn_model_zoo都可以进行转换
+
+## 实验室服务器进行yolov5 pt->rknn步骤
+
+### pt->onnx
+
+这一步在windows和ubuntu系统中都可以进行，两个系统都使用conda配置好了环境
+
+**winodw**
+
+开启Anaconda Prompt命令行
+
+```bash
+conda activate rk3588-yolov5
+
+D:
+
+cd rk3588-yolov5/yolov5-6.2
+
+python export.py --rknpu --weight yolov5s.pt
+```
+
+**ubuntu**
+
+```bash
+conda activate rknn-yolov5 # 可能差不多就是这个
+
+cd rk3588/yolov5-6.2
+
+python3 export.py --rknpu --weight yolov5s.pt
+```
+
+### onnx->rknn
+
+```bash
+cd /home/xxx/rk3588/rknn-toolkit2-2.3.2/rknn-toolkit2/examples/onnx/yolov5
+
+
+test.py
+
+# 模型和图片位置
+ONNX_MODEL = 'yolov5s.onnx'
+RKNN_MODEL = 'yolov5s.rknn'
+IMG_PATH = './bus.jpg'
+DATASET = './dataset.txt'
+
+#是否int8轻量化
+QUANTIZE_ON = True
+
+OBJ_THRESH = 0.25
+NMS_THRESH = 0.45
+IMG_SIZE = 640
+
+# 标定class
+# CLASSES = ("0",)  # 修正为元组
+CLASSES = ("person", "bicycle", "car", "motorbike ", "aeroplane ", "bus ", "train", "truck ", "boat", "traffic light",
+           "fire hydrant", "stop sign ", "parking meter", "bench", "bird", "cat", "dog ", "horse ", "sheep", "cow", "elephant",
+           "bear", "zebra ", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
+           "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife ",
+           "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza ", "donut", "cake", "chair", "sofa",
+           "pottedplant", "bed", "diningtable", "toilet ", "tvmonitor", "laptop	", "mouse	", "remote ", "keyboard ", "cell phone", "microwave ",
+           "oven ", "toaster", "sink", "refrigerator ", "book", "clock", "vase", "scissors ", "teddy bear ", "hair drier", "toothbrush ")
+
+
+
+
+python3 test.py
+```
