@@ -106,7 +106,7 @@ python export.py --rknpu --weight yolov5s.pt
 **ubuntu**
 
 ```bash
-conda activate rknn-yolov5 # 可能差不多就是这个
+conda activate rk3588-yolov5 # 可能差不多就是这个
 
 cd rk3588/yolov5-6.2
 
